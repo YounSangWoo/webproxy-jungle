@@ -19,6 +19,20 @@ proxy.o: proxy.c csapp.h
 proxy: proxy.o csapp.o
 	$(CC) $(CFLAGS) proxy.o csapp.o -o proxy $(LDFLAGS)
 
+#--------------------------------------
+hostinfo_test: csapp.o hostinfo.o
+	$(CC) $(CFLAGS) csapp.o hostinfo.o -o host_info $(LDFLAGS)
+
+hostinfo.o : hostinfo.c csapp.h
+	$(CC) $(CFLAGS) -c hostinfo.c
+
+echotest : csapp.o echoclient.o
+	$(CC) $(CFLAGS) csapp.o echoclient.o -o echotest $(LDFLAGS)
+
+echoclient.o : echoclient.c csapp.h
+	$(CC) $(CFLAGS) -c echoclient.c
+#--------------------------------------
+
 # Creates a tarball in ../proxylab-handin.tar that you can then
 # hand in. DO NOT MODIFY THIS!
 handin:
