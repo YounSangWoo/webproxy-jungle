@@ -43,7 +43,7 @@ typedef struct
 {
     char cache_obj[MAX_OBJECT_SIZE];
     char cache_url[MAXLINE];
-    int LRU;
+    int LRU;//List Recently Used
     int isEmpty;
 
     int readCnt;      // count of readers

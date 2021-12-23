@@ -17,6 +17,11 @@ int main(void)
     *p = '\0';
     sscanf(buf, "first=%d", &n1);
     sscanf(p+1, "second=%d", &n2);
+    
+    /* strcpy(arg1, buf);
+    strcpy(arg2, p + 1);
+    n1 = atoi(arg1);
+    n2 = atoi(arg2); */
   }
 
   /* Make the response body */
@@ -27,6 +32,7 @@ int main(void)
   sprintf(content, "%sThanks for visiting!\r\n", content);
 
   /* Generate the HTTP response */
+ 
   printf("Connection: close\r\n");
   printf("Content-length: %d\r\n", (int)strlen(content));
   printf("Content-type: text/html\r\n\r\n");

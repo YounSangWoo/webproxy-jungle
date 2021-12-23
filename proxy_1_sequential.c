@@ -73,31 +73,36 @@ void doit(int connfd)
     Rio_readinitb(&rio, connfd);
     Rio_readlineb(&rio, buf, MAXLINE);
     sscanf(buf, "%s %s %s", method, uri, version); /*read the client request line*/
-
-    if (strcasecmp(method, "GET"))
+    //connfd 로부터 읽어드린 정보(클라이언트의 요청)에서 method,uri,version 정보를 받아온다.
+    if (strcasecmp(method, "GET"))//GEt방식 만 받아들인다
     {
         printf("Proxy does not implement the method");
         return;
     }
     /*parse the uri to get hostname,file path ,port*/
     parse_uri(uri, hostname, path, &port);
-
+    //uri 분석하여 주소, 불러들일 파일경로, 포트넘버 확인
+   
     /*build the http header which will send to the end server*/
     build_http_header(endserver_http_header, hostname, path, port, &rio);
-
+    //프록시 서버에서 endserver로 보내기 위해 붙일 헤더를 생성한다 
+   
     /*connect to the end server*/
     end_serverfd = connect_endServer(hostname, port, endserver_http_header);
+    //프록시 서버와 앤드 서버를 연결해준다.
     if (end_serverfd < 0)
     {
         printf("connection failed\n");
         return;
     }
-
+    //&server_rio와end_serverfd를 연결한다.
     Rio_readinitb(&server_rio, end_serverfd);
-    /*write the http header to endserver*/
+
+    //endserver_http_header 를 end_serverfd에 쓴다
     Rio_writen(end_serverfd, endserver_http_header, strlen(endserver_http_header));
 
     /*receive message from end server and send to the client*/
+    //엔드서버로부터 받아온 정보를 connfd 로 옮긴다(클라이언트로 전달)
     size_t n;
     while ((n = Rio_readlineb(&server_rio, buf, MAXLINE)) != 0)
     {
@@ -129,6 +134,7 @@ void build_http_header(char *http_header, char *hostname, char *path, int port, 
             strcat(other_hdr, buf);
         }
     }
+
     if (strlen(host_hdr) == 0)
     {
         sprintf(host_hdr, host_hdr_format, hostname);
@@ -153,6 +159,7 @@ inline int connect_endServer(char *hostname, int port, char *http_header)
 }
 
 /*parse the uri to get hostname,file path ,port*/
+//클라이언트가 요청한 URI를 분석 그중 호스트네임 경로 포트번호 가져온다.
 void parse_uri(char *uri, char *hostname, char *path, int *port)
 {
     *port = 80;
